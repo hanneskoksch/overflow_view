@@ -22,16 +22,19 @@ class RenderOverflowView extends RenderBox
     required Axis direction,
     required double spacing,
     required OverflowViewLayoutBehavior layoutBehavior,
+    required bool anchored,
   })  : assert(spacing > double.negativeInfinity && spacing < double.infinity),
         _direction = direction,
         _spacing = spacing,
         _layoutBehavior = layoutBehavior,
+        _anchored = anchored,
         _isHorizontal = direction == Axis.horizontal {
     addAll(children);
   }
 
   Axis get direction => _direction;
   Axis _direction;
+
   set direction(Axis value) {
     if (_direction != value) {
       _direction = value;
@@ -42,6 +45,7 @@ class RenderOverflowView extends RenderBox
 
   double get spacing => _spacing;
   double _spacing;
+
   set spacing(double value) {
     assert(value > double.negativeInfinity && value < double.infinity);
     if (_spacing != value) {
@@ -52,6 +56,7 @@ class RenderOverflowView extends RenderBox
 
   OverflowViewLayoutBehavior get layoutBehavior => _layoutBehavior;
   OverflowViewLayoutBehavior _layoutBehavior;
+
   set layoutBehavior(OverflowViewLayoutBehavior value) {
     if (_layoutBehavior != value) {
       _layoutBehavior = value;
@@ -59,7 +64,11 @@ class RenderOverflowView extends RenderBox
     }
   }
 
+  bool get anchored => _anchored;
+  bool _anchored;
+
   bool _isHorizontal;
+
   @override
   void setupParentData(RenderBox child) {
     if (child.parentData is! OverflowViewParentData)
@@ -173,6 +182,19 @@ class RenderOverflowView extends RenderBox
       final OverflowViewParentData overflowIndicatorParentData =
           overflowIndicator.parentData as OverflowViewParentData;
       overflowIndicatorParentData.offset = getChildOffset(renderedChildCount);
+      double availableExtent =
+          _isHorizontal ? constraints.maxWidth : constraints.maxHeight;
+      overflowIndicatorParentData.offset += _isHorizontal
+          ? Offset(
+              availableExtent -
+                  getChildOffset(renderedChildCount).dx -
+                  childExtent,
+              0)
+          : Offset(
+              0,
+              availableExtent -
+                  getChildOffset(renderedChildCount).dy -
+                  childExtent);
       overflowIndicatorParentData.offstage = false;
       onstageCount++;
     }
@@ -277,6 +299,7 @@ class RenderOverflowView extends RenderBox
 
       final OverflowViewParentData overflowIndicatorParentData =
           overflowIndicator.parentData as OverflowViewParentData;
+      if (anchored) offset += availableExtent - childMainSize;
       overflowIndicatorParentData.offset =
           _isHorizontal ? Offset(offset, 0) : Offset(0, offset);
       overflowIndicatorParentData.offstage = false;

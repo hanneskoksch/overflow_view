@@ -26,6 +26,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
     Axis direction = Axis.horizontal,
     required List<Widget> children,
     double spacing = 0,
+    bool anchored = false,
   }) : this._all(
           key: key,
           builder: builder,
@@ -33,6 +34,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
           children: children,
           spacing: spacing,
           layoutBehavior: OverflowViewLayoutBehavior.fixed,
+          anchored: anchored,
         );
 
   /// Creates a flexible [OverflowView].
@@ -46,6 +48,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
     Axis direction = Axis.horizontal,
     required List<Widget> children,
     double spacing = 0,
+    bool anchored = false,
   }) : this._all(
           key: key,
           builder: builder,
@@ -53,6 +56,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
           children: children,
           spacing: spacing,
           layoutBehavior: OverflowViewLayoutBehavior.flexible,
+          anchored: anchored,
         );
 
   OverflowView._all({
@@ -62,6 +66,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
     required List<Widget> children,
     this.spacing = 0,
     required OverflowViewLayoutBehavior layoutBehavior,
+    required this.anchored,
   })  : assert(spacing > double.negativeInfinity &&
             spacing < double.infinity),
         _layoutBehavior = layoutBehavior,
@@ -88,6 +93,9 @@ class OverflowView extends MultiChildRenderObjectWidget {
 
   final OverflowViewLayoutBehavior _layoutBehavior;
 
+  /// If true, the overflow indicator gets pinned to the edge
+  final bool anchored;
+
   @override
   _OverflowViewElement createElement() {
     return _OverflowViewElement(this);
@@ -99,6 +107,7 @@ class OverflowView extends MultiChildRenderObjectWidget {
       direction: direction,
       spacing: spacing,
       layoutBehavior: _layoutBehavior,
+      anchored: anchored
     );
   }
 
